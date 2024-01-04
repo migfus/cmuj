@@ -3,7 +3,6 @@ import { defineStore } from 'pinia'
 import { useStorage, StorageSerializers } from '@vueuse/core'
 import axios from 'axios'
 import type { TGConfig, TGEducation, TGEligibility, TGPersonal, TGExperience, TGVoluntary, TGSeminar } from '../GlobalType'
-import { string } from 'yup'
 
 type TContent = {
   personal: TGPersonal,
@@ -45,6 +44,7 @@ export const useProfileSummaryStore = defineStore(title, () => {
         ext_name: null,
 
         civil_status_id: null,
+        civil_status: { name: null },
         birth_day: null,
         birth_place_id: null,
         blood_type_id: null,
@@ -53,14 +53,16 @@ export const useProfileSummaryStore = defineStore(title, () => {
         height: null,
         weight: null,
         address_id: null,
+        address_barangay: null,
+        address_street: null,
         address: null,
 
-        gsis_id: null,
-        pagibig_id: null,
-        tin_id: null,
+        mobile_numbers: []
       },
       education: {
+        id: null,
         level: null,
+        education_level: { name: null },
         school: null,
         degree: null,
         from: null,

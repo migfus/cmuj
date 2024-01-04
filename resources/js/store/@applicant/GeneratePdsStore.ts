@@ -3,7 +3,9 @@ import { defineStore } from 'pinia'
 import { useStorage, StorageSerializers } from '@vueuse/core'
 import axios from 'axios'
 import { notify } from 'notiwind'
-import type { TGConfig, TGPersonal, TGEducation } from '../GlobalType'
+import type { TGConfig, TGPersonal, TGEducation, TGEligibility, TGExperience, TGVoluntary, TGSeminar } from '../GlobalType'
+import download from 'downloadjs'
+import moment from 'moment'
 
 interface TContent {
   personal: TGPersonal,
@@ -11,6 +13,10 @@ interface TContent {
     email: string
   },
   educations: TGEducation[]
+  eligibilities: TGEligibility[]
+  experience: TGExperience[]
+  voluntaries: TGVoluntary[]
+  seminars: TGSeminar[]
 }
 
 const title = `applicant/GeneratePdsStore`
@@ -24,8 +30,9 @@ export const useGeneratePdsStore = defineStore(title, () => {
   async function GetAPI() {
     config.contentLoading = true
     try {
-      let { data: {data}} = await axios.get('/api/profile/generate-pds')
-      content.value = data
+      let data = await axios.get('/api/profile/generate-pds', { responseType: 'blob' })
+      download(data, 'example.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
     }
     catch(err) {
       console.log(err)
@@ -71,7 +78,11 @@ export const useGeneratePdsStore = defineStore(title, () => {
       user: {
         email: null,
       },
-      educations: []
+      educations: [],
+      eligibilities: [],
+      experience: [],
+      voluntaries: [],
+      seminars: [],
     }
   }
 

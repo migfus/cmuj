@@ -1,5 +1,10 @@
 <template>
   <AppButton @click="GeneratePDS()" :loading="$pds.config.buttonLoading">Generate PDS</AppButton>
+
+  <a href="/api/profile/generate-pds" downlod="asd.xlsx">
+    Download test
+  </a>
+  <AppButton @click="GeneratePDS()" :loading="$pds.config.buttonLoading" download="example.xlsx">Test</AppButton>
 </template>
 
 <script setup lang="ts">
@@ -8,6 +13,7 @@ import { useAddressStore } from '@/store/system/AddressStore'
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import download from 'downloadjs'
 import moment from 'moment'
+import { NumberAddComma } from '@/helpers/Converter'
 
 import AppButton  from '@/components/form/AppButton.vue'
 
@@ -18,6 +24,8 @@ async function GeneratePDS() {
   $pds.config.buttonLoading = true
   await $pds.GetAPI()
 
+  return true
+
   const pdfUrl = await fetch('http://127.0.0.1:8000/assets/PDS_CS_Form_No_212_Revised2017.pdf').then(res => res.arrayBuffer())
   const pngUrl = await fetch('https://cdn-icons-png.flaticon.com/512/33/33281.png').then(res => res.arrayBuffer())
 
@@ -26,7 +34,6 @@ async function GeneratePDS() {
   const checkImg = await pdfDoc.embedPng(pngUrl)
 
   const pages = pdfDoc.getPages()
-  const firstPage = pages[0]
   const smStyle = {
     size: 8,
     font: font,
@@ -38,7 +45,9 @@ async function GeneratePDS() {
     color: rgb(0.95, 0.1, 0.1),
   }
 
-  FirstPage(firstPage, mdStyle, smStyle, checkImg)
+  FirstPage(pages[0], mdStyle, smStyle, checkImg)
+  SecondPage(pages[1], mdStyle, smStyle)
+  thirdPage(pages[2], mdStyle, smStyle)
 
   const pdfBytes = await pdfDoc.save()
 
@@ -250,99 +259,97 @@ function FirstPage(firstPage, mdStyle, smStyle, checkImg) {
           {x: 552, y: 123, ...smStyle}
         )
         break
+      case 'Vocational':
+        firstPage.drawText(
+          row.school,
+          {x: 130, y: 104, ...mdStyle}
+        )
+        firstPage.drawText(
+          row.degree,
+          {x: 242, y: 104, ...smStyle}
+        )
+        firstPage.drawText(
+          moment(row.from).format('MM/DD/YYYY'),
+          {x: 373, y: 104, ...smStyle}
+        )
+        firstPage.drawText(
+          row.to ? moment(row.to).format('MM/DD/YYYY') : 'On-Going',
+          {x: 425, y: 104, ...smStyle}
+        )
+        firstPage.drawText(
+          'N/A',
+          {x: 465, y: 104, ...mdStyle}
+        )
+        firstPage.drawText(
+          row.to ? moment(row.to).format('YYYY') : 'On-Going',
+          {x: 505, y: 104, ...mdStyle}
+        )
+        firstPage.drawText(
+          'CHED Scholarship',
+          {x: 552, y: 104, ...smStyle}
+        )
+        break
+      case 'College':
+        firstPage.drawText(
+          row.school,
+          {x: 130, y: 85, ...smStyle}
+        )
+        firstPage.drawText(
+          row.degree,
+          {x: 242, y: 85, ...smStyle}
+        )
+        firstPage.drawText(
+          moment(row.from).format('MM/DD/YYYY'),
+          {x: 373, y: 85, ...smStyle}
+        )
+        firstPage.drawText(
+          row.to ? moment(row.to).format('MM/DD/YYYY') : 'On-Going',
+          {x: 425, y: 85, ...smStyle}
+        )
+        firstPage.drawText(
+          'N/A',
+          {x: 465, y: 85, ...mdStyle}
+        )
+        firstPage.drawText(
+          row.to ? moment(row.to).format('YYYY') : 'On-Going',
+          {x: 505, y: 85, ...mdStyle}
+        )
+        firstPage.drawText(
+          row.scholarship,
+          {x: 552, y: 85, ...smStyle}
+        )
+        break
+      default:
+        firstPage.drawText(
+          row.school,
+          {x: 130, y: 66, ...smStyle}
+        )
+        firstPage.drawText(
+          row.degree,
+          {x: 242, y: 66, ...smStyle}
+        )
+        firstPage.drawText(
+          moment(row.from).format('MM/DD/YYYY'),
+          {x: 373, y: 66, ...smStyle}
+        )
+        firstPage.drawText(
+          row.to ? moment(row.to).format('MM/DD/YYYY') : 'On-Going',
+          {x: 425, y: 66, ...smStyle}
+        )
+        firstPage.drawText(
+          'N/A',
+          {x: 465, y: 66, ...mdStyle}
+        )
+        firstPage.drawText(
+          row.to ? moment(row.to).format('YYYY') : 'On Going',
+          {x: 505, y: 66, ...mdStyle}
+        )
+        firstPage.drawText(
+          row.scholarship,
+          {x: 552, y: 66, ...smStyle}
+        )
     }
   })
-
-  // else if(false) { // vocatinal
-  //   firstPage.drawText(
-  //     'School Name',
-  //     {x: 130, y: 104, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     'Primary',
-  //     {x: 242, y: 104, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     'from',
-  //     {x: 373, y: 104, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     'to',
-  //     {x: 427, y: 104, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     'N/A',
-  //     {x: 465, y: 104, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     '2023',
-  //     {x: 505, y: 104, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     'CHED Scholarship',
-  //     {x: 552, y: 104, ...smStyle}
-  //   )
-  // }
-  // else if(false) { // college
-  //   firstPage.drawText(
-  //     'School Name',
-  //     {x: 130, y: 85, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     'Primary',
-  //     {x: 242, y: 85, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     'from',
-  //     {x: 373, y: 85, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     'to',
-  //     {x: 427, y: 85, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     'N/A',
-  //     {x: 465, y: 85, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     '2023',
-  //     {x: 505, y: 85, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     'CHED Scholarship',
-  //     {x: 552, y: 85, ...smStyle}
-  //   )
-  // }
-  // else {
-  //   firstPage.drawText(
-  //     'School Name',
-  //     {x: 130, y: 66, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     'Primary',
-  //     {x: 242, y: 66, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     'from',
-  //     {x: 373, y: 66, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     'to',
-  //     {x: 427, y: 66, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     'N/A',
-  //     {x: 465, y: 66, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     '2023',
-  //     {x: 505, y: 66, ...mdStyle}
-  //   )
-  //   firstPage.drawText(
-  //     'CHED Scholarship',
-  //     {x: 552, y: 66, ...smStyle}
-  //   )
-  // }
 
 
   firstPage.drawText(moment().format('MM/DD/YYYY'),
@@ -350,7 +357,129 @@ function FirstPage(firstPage, mdStyle, smStyle, checkImg) {
   )
 }
 
-function SecondPage(SecondPage, mdStyle) {
+function SecondPage(second, mdStyle, smStyle) {
+  let ya = 837
+  $pds.content.eligibilities.map(row => {
+    second.drawText(
+      row.name,
+      {x: 25, y: ya, ...smStyle}
+    )
+    second.drawText(
+      NumberAddComma(row.rating),
+      {x: 203, y: ya, ...smStyle}
+    )
+    second.drawText(
+      moment(row.exam_date).format('MM/DD/YYYY'),
+      {x: 271, y: ya, ...smStyle}
+    )
+    second.drawText(
+      $address.addressIDToFull(row.address_id),
+      {x: 340, y: ya, ...smStyle}
+    )
+    second.drawText(
+      row.number,
+      {x: 500, y: ya, ...smStyle}
+    )
+    second.drawText(
+      moment(row.validity_date).format('MM/DD/YYYY'),
+      {x: 551, y: ya, ...smStyle}
+    )
 
+    ya = ya - 19.5
+  })
+
+  let yb = 615
+  $pds.content.experience.map(row => {
+    second.drawText(
+      moment(row.from).format('MM/DD/YYYY'),
+      {x: 25, y: yb, ...smStyle}
+    )
+    second.drawText(
+      row.to ? moment(row.to).format('MM/DD/YYYY') : 'PRESENT',
+      {x: 70, y: yb, ...smStyle}
+    )
+    second.drawText(
+      row.position,
+      {x: 117, y: yb, ...smStyle}
+    )
+    second.drawText(
+      row.company,
+      {x: 271, y: yb, ...smStyle}
+    )
+    second.drawText(
+      `${NumberAddComma(row.salary)}/${row.salary_type.name}`,
+      {x: 425, y: yb, ...smStyle, size: 6}
+    )
+    second.drawText(
+      row.sg ?? 'N/A',
+      {x: 457, y: yb, ...smStyle}
+    )
+    second.drawText(
+      row.work_status.name,
+      {x: 500, y: yb, ...smStyle}
+    )
+    second.drawText(
+      row.is_government ? 'Y' : 'N',
+      {x: 555, y: yb, ...smStyle}
+    )
+
+    yb = yb - 20
+  })
+
+
+  second.drawText(moment().format('MM/DD/YYYY'),
+    {x: 425, y: 45, ...mdStyle}
+  )
+}
+
+function thirdPage(pdf, mdStyle, smStyle) {
+  let yv = 837
+  $pds.content.voluntaries.map(row => {
+    pdf.drawText(row.name,
+      {x: 33, y: yv, ...mdStyle}
+    )
+    pdf.drawText(moment(row.from).format('MM/DD/YYYY'),
+      {x: 213, y: yv, ...mdStyle}
+    )
+    pdf.drawText(moment(row.to).format('MM/DD/YYYY'),
+      {x: 267, y: yv, ...mdStyle}
+    )
+    pdf.drawText(row.hours,
+      {x: 320, y: yv, ...mdStyle}
+    )
+    pdf.drawText(row.position,
+      {x: 374, y: yv, ...mdStyle}
+    )
+
+    yv = yv - 20
+  })
+
+  let yt = 618
+  $pds.content.seminars.map(row => {
+    pdf.drawText(row.name,
+      {x: 33, y: yt, ...mdStyle}
+    )
+    pdf.drawText(moment(row.from).format('MM/DD/YYYY'),
+      {x: 213, y: yt, ...mdStyle}
+    )
+    pdf.drawText(moment(row.to).format('MM/DD/YYYY'),
+      {x: 267, y: yt, ...mdStyle}
+    )
+    pdf.drawText(row.hours,
+      {x: 320, y: yt, ...mdStyle}
+    )
+    pdf.drawText(row.seminar_type.name,
+      {x: 374, y: yt, ...mdStyle}
+    )
+    pdf.drawText(row.sponsor,
+      {x: 433, y: yt, ...mdStyle}
+    )
+
+    yt = yt - 20
+  })
+
+  pdf.drawText(moment().format('MM/DD/YYYY'),
+    {x: 429, y: 60, ...mdStyle}
+  )
 }
 </script>

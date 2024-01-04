@@ -11,12 +11,16 @@
               <p class="truncate text-sm font-medium text-gray-900">{{ FullName(content.personal)  }}</p>
               <p class="truncate text-sm text-gray-900">Civil Status: {{ content.personal.civil_status_id }}</p>
               <p class="truncate text-sm text-gray-900">Birth Day: {{ moment(content.personal.birth_day).format('MMM DD, YYYY') }}</p>
-              <p class="truncate text-sm text-gray-900">Birth Place: {{ addressIDToFull(content.personal.birth_place_id) }}</p>
+              <p class="truncate text-sm text-gray-900">Birth Place: {{ $address.addressIDToFull(content.personal.birth_place_id) }}</p>
               <p class="truncate text-sm text-gray-900">Blood Type: {{ content.personal.blood_type.name }}</p>
               <p class="truncate text-sm text-gray-900">Sex: {{ content.personal.sex ? 'Male' : 'Female' }}</p>
               <p class="truncate text-sm text-gray-900">Height: {{ content.personal.height }}m</p>
               <p class="truncate text-sm text-gray-900">Weight: {{ content.personal.weight }}kl</p>
-              <p class="truncate text-sm text-gray-900">Address: {{ content.personal.address }}, {{ addressIDToFull(content.personal.address_id) }}</p>
+              <p class="truncate text-sm text-gray-900">
+                Address:
+                {{ `${content.personal.address}, ${content.personal.address_street}, ${content.personal.address_barangay}` }},
+                {{ $address.addressIDToFull(content.personal.address_id) }}
+              </p>
               <p class="truncate text-sm text-gray-900">GSIS ID: {{ content.personal.gsis_id ?? 'n/a' }}</p>
               <p class="truncate text-sm text-gray-900">PAGIBIG ID: {{ content.personal.pagibig_id ?? 'n/a'}}</p>
               <p class="truncate text-sm text-gray-900">TIN ID: {{ content.personal.tin_id ?? 'n/a' }}</p>
@@ -32,7 +36,7 @@
           <RouterLink :to="{name: 'profile-education'}" class="block focus:outline-none">
             <span class="absolute inset-0" aria-hidden="true" />
             <div class="grid grid-cols-2 gap-2">
-              <p class="truncate text-sm font-medium text-gray-900 col-span-2 ">{{ content.education.education_levels.name }} - {{ content.education.school }}</p>
+              <p class="truncate text-sm font-medium text-gray-900 col-span-2 ">{{ content.education.education_level.name }} - {{ content.education.school }}</p>
               <p class="truncate text-sm text-gray-900">Date: {{ moment(content.education.from).format('MMM DD, YYYY') }} - {{ moment(content.education.to).format('MMM DD, YYYY') }}</p>
               <p class="truncate text-sm text-gray-900">Degree: {{ content.education.degree ?? 'n/a'}}</p>
               <p class="truncate text-sm text-gray-900">Scholarship: {{ content.education.scholarship ?? 'n/a'}}</p>
@@ -51,7 +55,7 @@
             <div class="grid grid-cols-2 gap-2">
               <p class="truncate text-sm font-medium text-gray-900">{{ content.eligibility.name }}</p>
               <p class="truncate text-sm text-gray-900">Rating: {{ content.eligibility.rating }}</p>
-              <p class="truncate text-sm text-gray-900">Address: {{ addressIDToFull(content.eligibility.address_id) }}</p>
+              <p class="truncate text-sm text-gray-900">Address: {{ $address.addressIDToFull(content.eligibility.address_id) }}</p>
               <p class="truncate text-sm text-gray-900">Exam Date: {{ moment(content.eligibility.exam_date).format('MMM DD, YYYY') }}</p>
               <p class="truncate text-sm text-gray-900">Validity: {{ moment(content.eligibility.validity_date).format('MMM DD, YYYY') }}</p>
               <p class="truncate text-sm text-gray-900">ID Number: {{ content.eligibility.number }}</p>
@@ -120,9 +124,10 @@ import { onMounted, toRefs } from 'vue'
 import { useProfileSummaryStore } from '@/store/@applicant/ProfileSummaryStore'
 import { FullName, NumberAddComma } from '@/helpers/Converter'
 import moment from 'moment'
-import { addressIDToFull } from '@/helpers/Converter'
+import { useAddressStore } from '@/store/system/AddressStore'
 
 const $profile = useProfileSummaryStore()
+const $address = useAddressStore()
 const { content } = toRefs($profile)
 
 function DateToPresent(from: Date, to: Date) {

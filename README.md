@@ -34,3 +34,6 @@ Laravel is accessible, powerful, and provides tools required for large, robust a
 
 ## Development Progress
 [https://trello.com/b/IgPLBqZN/cmu-hrmo-applicants](https://trello.com/b/IgPLBqZN/cmu-hrmo-applicants)
+
+## PHP Requirements
+- extension=zip, extension=gd

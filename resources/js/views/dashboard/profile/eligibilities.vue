@@ -112,7 +112,7 @@
                   <div class="px-4 py-4 sm:px-6">
                     <div class="flex items-center justify-between">
                       <p :class="['truncate text-sm font-medium text-primary-600']">
-                        {{ row.name }} - {{ addressIDToFull(row.address_id) }}
+                        {{ row.name }} - {{ $address.addressIDToFull(row.address_id) }}
                       </p>
                       <div class="ml-2 flex flex-shrink-0">
                         <AppButton @click="$eligibilities.ChangeForm(row, 'update')" color='white' class="mr-2" size="sm">Edit</AppButton>
@@ -158,7 +158,7 @@ import { onMounted, ref, watch } from 'vue'
 import * as Yup from 'yup'
 import { useEligibilityStore } from '@/store/@applicant/EligibilitiesStore'
 import { useAddressStore } from '@/store/system/AddressStore'
-import { NumberAddComma, addressIDToFull, cityIDToProvinceID } from '@/helpers/Converter'
+import { NumberAddComma } from '@/helpers/Converter'
 import { useDebounceFn } from '@vueuse/core'
 import moment from 'moment'
 import { CalendarIcon, CreditCardIcon, StarIcon, } from '@heroicons/vue/24/outline'
